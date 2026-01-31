@@ -1,6 +1,5 @@
 import { useMemo, useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
+
 import "./App.css";
 
 /* ### 實作題檢核點
@@ -41,21 +40,32 @@ function App() {
   // TODO: 在這裡定義狀態與函式
 
   const [photo, setPhoto] = useState<Photo[]>(samplePhotos);
+  const [searchUrl, setSearchUrl] = useState<string>("");
+  const [searchTitle, setSearchTitle] = useState<string>("");
   const [category, setCategory] = useState<string>("全部");
 
   const filterPhoto = useMemo(() => {
     if (category === "全部") return photo;
 
-    return photo.filter((item) => item.tag === category);
-  }, [photo, category]);
+    return photo.filter(
+      (item) => item.tag === category && item.url.includes(searchUrl),
+    );
+  }, [photo, category, searchTitle, searchUrl]);
+
+  const handleUrlChange = (url: string) => {
+    setSearchUrl(url);
+  };
+  const handleTitleChange = (Title: string) => {
+    setSearchTitle(Title);
+  };
 
   const handleSelectCategory = (tag: string) => {
     setCategory(tag);
     //filter
   };
 
-  const handleEditPhoto = (item: Photo) => {};
-  const handleFilterPhoto = () => {};
+  /*  const handleEditPhoto = (item: Photo) => {}; */
+
   /* 6. 能夠刪除特定的相片  */
   const handleRemovePhoto = (id: number) => {
     setPhoto((pre) => pre.filter((photo) => photo.id !== id));
@@ -74,15 +84,15 @@ function App() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <input
             type="text"
-            value={""}
-            onChange={(e) => {}}
+            value={searchUrl}
+            onChange={(e) => handleUrlChange(e.target.value)}
             placeholder="圖片網址"
             className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
           />
           <input
             type="text"
             value={""}
-            onChange={(e) => {}}
+            onChange={(e) => handleTitleChange(e.target.value)}
             placeholder="相片標題"
             className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
           />
@@ -150,7 +160,7 @@ function App() {
                 <img
                   src={item.url}
                   alt={item.title}
-                  onClick={() => handleEditPhoto(item)}
+                  /*  onClick={() => handleEditPhoto(item)} */
                   className="w-full h-48 object-cover"
                 />
                 <div className="p-3">
